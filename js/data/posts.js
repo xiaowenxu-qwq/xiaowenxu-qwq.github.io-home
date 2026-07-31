@@ -3,7 +3,7 @@ export const posts = [
     {
         id: 1,
         title: "JavaScript异步编程指南",
-        date: "2024-01-15",
+        date: "0000-00-00",
         category: "JavaScript",
         excerpt: "深入探讨Promise、async/await和事件循环机制...",
         tags: ["JavaScript", "异步", "Promise"],
@@ -69,7 +69,7 @@ JavaScript运行时包含：
     {
         id: 2,
         title: "CSS Grid布局完全指南",
-        date: "2024-01-10",
+        date: "0000-00-00",
         category: "CSS",
         excerpt: "掌握现代CSS布局利器，创建响应式网页设计...",
         tags: ["CSS", "Grid", "响应式"],
@@ -142,7 +142,7 @@ CSS Grid彻底改变了我们创建网页布局的方式，值得深入学习！
     {
         id: 3,
         title: "Git常用命令速查表",
-        date: "2024-01-05",
+        date: "0000-00-00",
         category: "工具",
         excerpt: "开发必备的Git命令集合，提高版本控制效率...",
         tags: ["Git", "版本控制", "命令行"],
@@ -246,7 +246,7 @@ git diff --staged
     {
         id: 4,
         title: "测试文章",
-        date: "2026-7-19",
+        date: "2026-07-19",
         category: "测试",
         excerpt: "这是一个测试文章的摘要...",
         tags: ["测试", "示例"],
@@ -255,7 +255,7 @@ git diff --staged
     {
         id: 5,
         title: "论存在的碎片：一则关于虚无的注脚",
-        date: "2026-7-19",
+        date: "2026-07-19",
         category: "哲学",
         excerpt: "名言风暴席卷逻辑废墟，一场荒诞而华丽的思想拼贴盛宴。",
         tags: ["哲学", "严谨","科学"],
@@ -310,7 +310,7 @@ git diff --staged
     {
         id: 6,
         title: "题解：P10468 兔子与兔子",
-        date: "2025-5-19",
+        date: "2025-05-19",
         category: "洛谷",
         excerpt: "这是一篇题解",
         tags: ["哈希"],
@@ -433,7 +433,7 @@ signed main(){
     {
         id: 7,
         title: "题解：P13935 [蓝桥杯 2022 省 Java B] 回忆迷宫",
-        date: "2025-9-9",
+        date: "2025-09-09",
         category: "洛谷",
         excerpt: "这是一篇题解",
         tags: ["搜索"],
@@ -537,7 +537,7 @@ signed main(){
     {
         id: 8,
         title: "题解：P13288 [GCJ 2013 #1B] Osmos",
-        date: "2025-7-18",
+        date: "2025-07-18",
         category: "洛谷",
         excerpt: "这是一篇题解",
         tags: ["贪心"],
@@ -605,7 +605,7 @@ signed main(){
     {
         id: 9,
         title: "题解：P12935 [NERC 2019] Balls of Buma",
-        date: "2025-7-20",
+        date: "2025-07-20",
         category: "洛谷",
         excerpt: "这是一篇题解",
         tags: ["贪心","双指针"],
@@ -666,7 +666,7 @@ signed main(){
     {
         id: 10,
         title: "题解：P13800 [SWERC 2023] Throwing dice",
-        date: "2025-8-26",
+        date: "2025-08-26",
         category: "洛谷",
         excerpt: "这是一篇题解",
         tags: ["期望"],
@@ -712,7 +712,7 @@ signed main()
     {
         id: 11,
         title: "题解：P13929 [蓝桥杯 2022 省 Java B] 山",
-        date: "2025-9-9",
+        date: "2025-09-09",
         category: "洛谷",
         excerpt: "这是一篇题解",
         tags: ["暴力"],
@@ -781,7 +781,7 @@ signed main(){
     {
         id: 12,
         title: "题解：P13877 [蓝桥杯 2023 省 Java A] 与或异或",
-        date: "2025-9-7",
+        date: "2025-09-07",
         category: "洛谷",
         excerpt: "这是一篇题解",
         tags: ["搜索"],
