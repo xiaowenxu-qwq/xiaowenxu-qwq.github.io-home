@@ -429,5 +429,424 @@ signed main(){
 }
 \`\`\`
 `
+    },
+    {
+        id: 7,
+        title: "题解：P13935 [蓝桥杯 2022 省 Java B] 回忆迷宫",
+        date: "2025-9-9",
+        category: "洛谷",
+        excerpt: "这是一篇题解",
+        tags: ["搜索"],
+        content:`# 思路
+用一个数组存取地图信息，0 为墙，1 为内迷宫空地，2 为外迷宫空地，并将初始值都设为 0（即全地图都为墙，图片实例为样例）。
+
+![](https://cdn.luogu.com.cn/upload/image_hosting/jgvi15kl.png?x-oss-process=image/resize,m_lfit,h_1170,w_1225)
+
+每次将走到的地方设为空地（起点横纵坐标要大于 101，因为 $n$ 最大为 100 防止极端测试点，如 100 个 U ）。
+
+![](https://cdn.luogu.com.cn/upload/image_hosting/wblyysag.png?x-oss-process=image/resize,m_lfit,h_1170,w_1225)
+
+再将所有与空地没有接壤的的地方都设为外迷宫空地（但是会多设置掉一些内部墙，如被空地包围起来又没与空地接壤的墙）。
+
+![](https://cdn.luogu.com.cn/upload/image_hosting/m9wd20tg.png?x-oss-process=image/resize,m_lfit,h_1170,w_1225)
+
+再将地图需要输出的地方区域遍历出来，重新将区域内没有走过的空地变为墙（设置回多设置的墙）。
+
+![](https://cdn.luogu.com.cn/upload/image_hosting/tr7hqg4r.png?x-oss-process=image/resize,m_lfit,h_1170,w_1225)
+
+之后从外围判断不需要的墙壁并改为外迷宫空地（即不接壤空地并且连接外部的墙）。
+
+![](https://cdn.luogu.com.cn/upload/image_hosting/rfwtckb8.png?x-oss-process=image/resize,m_lfit,h_1170,w_1225)
+
+最后将地图转化为字符输出即可。
+
+![](https://cdn.luogu.com.cn/upload/image_hosting/pv9bd3vi.png?x-oss-process=image/resize,m_lfit,h_1170,w_1225)
+
+---
+
+# AC 代码
+\`\`\`cpp
+#include<bits/stdc++.h>
+#define int long long 
+#define max(a,b) (a>b?a:b) 
+#define min(a,b) (a<b?a:b) 
+using namespace std;
+inline int read(){
+	int x=0,f=1;char c=getchar();
+	while(c<'0'||c>'9'){if(c=='-')f=-1;c=getchar();}
+	while(c>='0'&&c<='9')x=(x<<3)+(x<<1)+c-'0',c=getchar();
+	return x*f;
+}//快读 
+void write(int x){
+    if(x<0)putchar('-'),x=-x;
+    if(x<10)putchar(x+'0');
+    else write(x/10),putchar(x%10+'0');
+}//快写 
+char c[300];//记录输入 
+int mp[300][300];//记录地图 0为墙，1为内迷宫空地，2为外迷宫空地 
+bool book[300][300];//记录走过的区域 
+signed main(){
+	int n=read();
+    for(int i=1;i<=n;i++)cin>>c[i];
+    for(int i=0;i<=205;i++)
+        for(int j=0;j<=205;j++)
+            mp[i][j]=0;//地图初始化为墙 
+    int x=102,y=102;//初始化起点 
+    mp[x][y]=1,book[x][y]=1;//起点标记为空地 
+    for(int i=1;i<=n;i++){
+        if(c[i]=='U')x--;
+        else if(c[i]=='D')x++;
+        else if(c[i]=='L')y--;
+        else if(c[i]=='R')y++;
+		//移动 
+        mp[x][y]=1,book[x][y]=1;//标记为空地 
+    }
+	int l1=0x3f3f3f3f,r1=-1,l2=0x3f3f3f3f,r2=-1;//地图输出范围，l1为左边，r1为右边，l2为上边，r2为下边 
+    for(int i=1;i<=205;i++){
+        for(int j=1;j<=205;j++){
+        	if(!(book[i-1][j]||book[i+1][j]||book[i][j-1]||book[i][j+1]))mp[i][j]=2;//上下左右都没有走过的空地（即内迷宫空地）则定义为外迷宫 
+        	else l1=min(l1,i),l2=min(l2,j),r1=max(r1,i),r2=max(r2,j);//否则为必须留下的墙（但判不到所有的墙，如内迷宫被空地围起来又在墙中心的墙），留下最外围坐标。 
+		}
+    }
+    for(int i=l1;i<=r1;i++)
+        for(int j=l2;j<=r2;j++)
+        	if(!book[i][j])mp[i][j]=0;//将剩余地图内没有走过的地方重新变为墙（为了判到上一步被意外删除的墙，如内迷宫被空地围起来又在墙中心的墙） 
+    for(int i=l1;i<=r1;i++)
+        for(int j=l2;j<=r2;j++)
+        	if(mp[i][j]==0)
+				if((i-1<l1||i+1>r1||j-1<l2||j+1>r2) && !(mp[i-1][j]==1&&(i-1)>=l1||mp[i+1][j]==1&&(i+1)<=r1||mp[i][j-1]==1&&(j-1)>=l2||mp[i][j+1]==1&&(j+1)<=r2)||!(mp[i-1][j]==1&&(i-1)>=l1||mp[i+1][j]==1&&(i+1)<=r1||mp[i][j-1]==1&&(j-1)>=l2||mp[i][j+1]==1&&(j+1)<=r2)&&(mp[i-1][j]==2||mp[i+1][j]==2||mp[i][j-1]==2||mp[i][j+1]==2))mp[i][j]=2;
+	//判断所有墙壁是否符合必须保留的条件 
+    for(int i=r1;i>l1;i--)
+        for(int j=r2;j>l2;j--)//倒序重新判一遍，防止右下角因为更新顺序的原因没有完全判到。 
+        	if(mp[i][j]==0)
+				if((i-1<l1||i+1>r1||j-1<l2||j+1>r2) && !(mp[i-1][j]==1&&(i-1)>=l1||mp[i+1][j]==1&&(i+1)<=r1||mp[i][j-1]==1&&(j-1)>=l2||mp[i][j+1]==1&&(j+1)<=r2)||!(mp[i-1][j]==1&&(i-1)>=l1||mp[i+1][j]==1&&(i+1)<=r1||mp[i][j-1]==1&&(j-1)>=l2||mp[i][j+1]==1&&(j+1)<=r2)&&(mp[i-1][j]==2||mp[i+1][j]==2||mp[i][j-1]==2||mp[i][j+1]==2))mp[i][j]=2;
+	//判断所有墙壁是否符合必须保留的条件 
+    for(int i=l1;i<=r1;i++){
+        for(int j=l2;j<=r2;j++){
+        	if(mp[i][j]!=0)printf(" ");//不为墙壁输出空格，即内迷宫空地与外迷宫空地 
+        	else printf("*");//否则输出墙 
+		}
+		printf("\\n");
+    }//改为字符输出 
+	return 0;
+}
+\`\`\`
+
+个人[提交记录](https://www.luogu.com.cn/record/234323725)（代码未经过整理）。` 
+    },
+    {
+        id: 8,
+        title: "题解：P13288 [GCJ 2013 #1B] Osmos",
+        date: "2025-7-18",
+        category: "洛谷",
+        excerpt: "这是一篇题解",
+        tags: ["贪心"],
+        content:`# 思路
+
+对于每个测试的输入，先对其他小球体积进行排序，再枚举保留的小球数量。
+
+- 从初始体积 $A$ 开始，依次尝试吞噬前 $i$ 个小球。
+- 若当前体积不足以吞噬小球，则通过添加小球来增长体积（吞噬后体积变为 $2\\times a_i - 1$），直到可以吞噬。
+- 若当前体积为 1（无法添加），标记为无效。
+
+---
+
+# AC 代码
+
+\`\`\`cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read(){
+	int x=0,f=1;char c=getchar();
+	while(c<'0'||c>'9'){if(c=='-')f=-1;c=getchar();}
+	while(c>='0'&&c<='9')x=(x<<3)+(x<<1)+c-'0',c=getchar();
+	return x*f;
+}
+int a[100001];
+signed main(){
+    int T=read();
+    for(int t=1;t<=T;t++){
+        int A=read(),n=read();
+        for(int i=1;i<=n;i++)
+           a[i]=read();
+        sort(a+1,a+n+1);
+        int ans=n;
+        for (int i=1;i<=n;i++){
+            int cnt=A,add=0;
+            bool book=true;
+            for (int j=1;j<=i;j++){
+                if(cnt>a[j])
+                    cnt+=a[j];
+                else{
+                    if(cnt==1){
+                        book=false;
+                        break;
+                    }
+                    while(cnt<=a[j]) {
+                        add++;
+                        cnt=2*cnt-1;
+                    }
+                    cnt+=a[j];
+                }
+            }
+            if(book){
+                int tot=add+(n-i);
+                if (tot<ans)
+                    ans=tot;
+            }
+        }
+        printf("Case #%lld: %lld\\n",t,ans);
+    }
+    return 0;
+}
+\`\`\` `
+    },
+    {
+        id: 9,
+        title: "题解：P12935 [NERC 2019] Balls of Buma",
+        date: "2025-7-20",
+        category: "洛谷",
+        excerpt: "这是一篇题解",
+        tags: ["贪心","双指针"],
+        content:`# 思路
+当我们插入新球后，要形成连续至少 3 个同色球，才能消除该段球。并且消除后相邻球段需要合并，才可能引发进一步的消除。所以说字符串必须满足以下条件才能消除完成。
+
+1. 字符串的连续颜色段必须对称。
+2. 存在一个中间段，使插入同色球后能触发连锁消除（及颜色段的数量为奇数）。
+3. 对称段长度之和至少为 3，中间段长度至少为 2（插入新球后为 3）。
+
+判断出是否可以消除后，可以使得所有球被消除的插入位置的方式数就很好算了（题目描述中写到还要输出选择新球颜色，但是样例中没输出，我们以样例输出为主），如果无法全部消除则输出 0，如果可以全部消除则输出中间段的长度**加一**。
+
+---
+
+# 代码
+\`\`\`cpp
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+char a[300010];//颜色块
+int cnt[300010];//每个块的长度
+bool book=1;
+signed main(){
+    string s;
+    cin>>s;
+    int len=s.length();
+    a[1]=s[0],cnt[1]=1;
+    int tot=1;
+    for(int i=1;i<len;i++){
+        if(s[i]==a[tot])
+            cnt[tot]++;//颜色相同，增加长度
+		else{
+            tot++;//增加新颜色块
+            a[tot]=s[i];
+            cnt[tot]=1;
+        }
+    }
+    //检查对称性：颜色相同且长度和大于等于3
+    for(int i=1;i<=tot/2;i++){
+        if(a[i]!=a[tot-i+1]||cnt[i]+cnt[tot-i+1]<3){
+            book=0;
+            break;
+        }
+    }
+    if(tot%2==1)
+        if(cnt[(tot+1)/2]<2)//偶数块无解
+            book=0;
+	else
+        book=0;
+    if(book)
+        printf("%lld",cnt[(tot+1)/2]+1);//中间段长度+1
+    else
+        printf("0");
+    return 0;
+}
+\`\`\` `
+    },
+    {
+        id: 10,
+        title: "题解：P13800 [SWERC 2023] Throwing dice",
+        date: "2025-8-26",
+        category: "洛谷",
+        excerpt: "这是一篇题解",
+        tags: ["期望"],
+        content:`# 题目意思
+ALICE 和 BOB 分别有 $m$ 和 $n$ 个骰子，ALICE 的第 $i$ 骰子有 $a_i$ 面，BOB 的第 $i$ 骰子有 $b_i$ 面，所有骰子投完后谁的总点数大谁就获胜，问他们谁获胜的可能性更大。
+
+# 思路
+因为骰子是随机的，为了保证公平，我们计算每个骰子的平均点数，第 $i$ 个骰子的平均点数为 $\\lfloor\\frac{a_i+1}{2}\\rfloor$，我们将两边所有骰子的平均点数相加并进行比较，输出总平均点数和大的一方的名字，如果平局则输出 TIE。
+
+---
+
+# AC 代码
+\`\`\`cpp
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+inline int read(){
+	int x=0,f=1;char c=getchar();
+	while(c<'0'||c>'9'){if(c=='-')f=-1;c=getchar();}
+	while(c>='0'&&c<='9')x=(x<<3)+(x<<1)+c-'0',c=getchar();
+	return x*f;
+}//快读
+void write(int x)
+{
+    if(x<0)putchar('-'),x=-x;
+    if(x<10)putchar(x+'0');
+    else write(x/10),putchar(x%10+'0');
+}//快写
+int a[100001],b[100001];
+int cnta,cntb;
+signed main()
+{
+	int m=read(),n=read();
+    for(int i=1;i<=m;i++)a[i]=read(),cnta+=a[i];//ALICE点数和
+    for(int i=1;i<=n;i++)b[i]=read(),cntb+=b[i];//BOB点数和
+    if(m+cnta>n+cntb)printf("ALICE");
+    else if(m+cnta<n+cntb)printf("BOB");
+    else printf("TIED");
+	return 0;
+} 
+\`\`\``
+    },
+    {
+        id: 11,
+        title: "题解：P13929 [蓝桥杯 2022 省 Java B] 山",
+        date: "2025-9-9",
+        category: "洛谷",
+        excerpt: "这是一篇题解",
+        tags: ["暴力"],
+        content:`# 思路
+因为这是一道结果输出题，可以在本地运行出答案后再输出，所以我们可以不用过多考虑时间复杂度，直接写一份暴力代码，判断每一个数是否为回文数并且前一半数字单调不减，两个条件都符合即为一座山，并将答案加一，最后在本地运行出答案后提交即可。
+
+---
+
+# 暴力代码
+\`\`\`cpp
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+void write(int x)
+{
+    if(x<0)putchar('-'),x=-x;
+    if(x<10)putchar(x+'0');
+    else write(x/10),putchar(x%10+'0');
+}
+bool check(int n){//判断回文
+	int r=n,cnt=0,l=0;
+	while(n!=0){
+		cnt=n%10;
+		l=l*10+cnt;
+		n/=10;
+	}
+	return r==l;
+}
+bool check2(int n){//判断单调不减
+	int r=n,cnt=0;
+	while(r!=0){
+		r/=10;
+		cnt++;
+	}
+	int k=0;
+	for(int i=1;i<=(cnt+1)/2;i++){
+		if(n%10<k)return false;
+		else k=n%10;
+		n/=10;
+	}
+	return true;
+}
+int ans;
+signed main()
+{
+	for(int i=2022;i<=2022222022;i++)//枚举从2022到2022222022
+        if(check(i)&&check2(i))ans++;
+    write(ans);
+	return 0;
+} 
+\`\`\`
+
+---
+
+# 最终代码（运行 61 秒）
+\`\`\`cpp
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+signed main(){
+	printf("3138");
+	return 0;
+} 
+\`\`\``
+    },
+    {
+        id: 12,
+        title: "题解：P13877 [蓝桥杯 2023 省 Java A] 与或异或",
+        date: "2025-9-7",
+        category: "洛谷",
+        excerpt: "这是一篇题解",
+        tags: ["搜索"],
+        content:`# 题目意思
+给定一个初始输入序列 \`1, 0, 1, 0, 1\`，需要通过 4 层逻辑门电路（每层分别有 4、3、2、1 个门），每个门会是 \`&\`、\`|\`、\`^\` 三种操作之一。求最终输出为 1 的电路方案数。
+
+# 思路
+用 dfs 暴力枚举每一个位置三种门的放法，记录最终门电图输出为 1 的个数，输出即可。
+
+暴力代码。
+\`\`\`cpp
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+void write(int x)
+{
+    if(x<0)putchar('-'),x=-x;
+    if(x<10)putchar(x+'0');
+    else write(x/10),putchar(x%10+'0');
+}
+int a[11][11],ans;
+void dfs(int h,int k){
+     if (k>5-h+1){
+        if (h==5){
+            if(a[5][1]==1)ans++;
+            return;
+        }
+        dfs(h+1,1);//k 超出边界，枚举下一行。
+        return;
+    }
+    a[h][k]=a[h-1][k] & a[h-1][k+1];//枚举 & 门
+    dfs(h,k+1);
+    a[h][k]=a[h-1][k] ^ a[h-1][k+1];//枚举 ^ 门
+    dfs(h,k+1);
+    a[h][k]=a[h-1][k] | a[h-1][k+1];//枚举 | 门
+    dfs(h,k+1);
+    return ;
+}
+signed main()
+{
+	for(int i=1;i<=5;i++)
+        a[1][i]=i%2;//初始化1 0 1 0 1
+    dfs(2,1);
+    write(ans);
+	return 0;
+} 
+\`\`\`
+
+暴力解法的时间复杂度为 $O(3^{10})$，因为总共有 10 个门，每个门有 3 种选择但是还是有些慢了（~~所以我们需要优化~~）。
+
+# 最终代码
+\`\`\`cpp
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+void write(int x)
+{
+    if(x<0)putchar('-'),x=-x;
+    if(x<10)putchar(x+'0');
+    else write(x/10),putchar(x%10+'0');
+}
+signed main(){
+    write(30528);
+	return 0;
+} 
+\`\`\``
     }
 ];
